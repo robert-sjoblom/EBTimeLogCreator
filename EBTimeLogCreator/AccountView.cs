@@ -4,8 +4,8 @@ namespace EBTimeLogCreator
 {
     public class AccountView : ContentPage
     {
-        private Entry username;
-        private Entry password;
+        public Entry Username { get; }
+        public Entry Password { get; }
         public View userInfo { get; }
 
         public AccountView( )
@@ -31,7 +31,7 @@ namespace EBTimeLogCreator
                 FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label))
             });
 
-            panel.Children.Add(username = new Entry
+            panel.Children.Add(Username = new Entry
             {
                 Placeholder = "Username",
             });
@@ -42,7 +42,7 @@ namespace EBTimeLogCreator
                 FontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label))
             });
 
-            panel.Children.Add(password = new Entry
+            panel.Children.Add(Password = new Entry
             {
                 Placeholder = "Password",
                 IsPassword = true

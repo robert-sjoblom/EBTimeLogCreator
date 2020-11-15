@@ -9,12 +9,12 @@ namespace EBTimeLogCreator
         private Entry description;
         private Button submitButton;
         private AccountView accountView;
+        private TimeEntryRestService TimeEntryRestService = new TimeEntryRestService();
 
         public MainPage()
         {
             this.Padding = new Thickness(20);
             this.accountView = new AccountView();
-
 
             StackLayout mainView = new StackLayout
             {
@@ -37,13 +37,13 @@ namespace EBTimeLogCreator
 
             mainView.Children.Add(description = new Entry
             {
-                Placeholder = "Description"
+                Placeholder = "Description",
+                Text = "Description!"
             });
 
             mainView.Children.Add(submitButton = new Button
             {
                 Text = "Submit",
-                BackgroundColor = Color.ForestGreen,
                 IsEnabled = false
             });
 
@@ -79,9 +79,21 @@ namespace EBTimeLogCreator
 
         }
 
-        private void OnSubmit(object sender, EventArgs e)
+        private async void OnSubmit(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+
+            var entry = new TimeEntry(description.Text);
+            var response = await TimeEntryRestService.SaveTimeLogAsync(entry, accountView.AuthString());
+
+            if (response.IsSuccessStatusCode)
+            {
+                DependencyService.Get<IMessage>().ShortAlert("That went okay!");
+                description.Text = "";
+            }
+            else
+            {
+                DependencyService.Get<IMessage>().ShortAlert("That could have gone better.");
+            }
         }
 
         private bool CredentialsExist()

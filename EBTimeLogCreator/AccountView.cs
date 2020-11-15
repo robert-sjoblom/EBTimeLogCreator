@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Xamarin.Forms;
 namespace EBTimeLogCreator
 {
@@ -34,6 +35,7 @@ namespace EBTimeLogCreator
             panel.Children.Add(Username = new Entry
             {
                 Placeholder = "Username",
+                Keyboard = Keyboard.Email
             });
 
             panel.Children.Add(new Label
@@ -51,6 +53,20 @@ namespace EBTimeLogCreator
             userInfo.Content = panel;
 
             this.userInfo = userInfo;
+        }
+
+        internal string AuthString()
+        {
+            var str = new StringBuilder();
+            str.Append(Username.Text);
+            str.Append(":");
+            str.Append(Password.Text);
+
+            byte[] bytes = Encoding.Default.GetBytes(str.ToString());
+
+            var base64String = System.Convert.ToBase64String(bytes);
+
+            return "Basic " + base64String;
         }
     }
 }

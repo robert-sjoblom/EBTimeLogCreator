@@ -38,7 +38,6 @@ namespace EBTimeLogCreator
             mainView.Children.Add(description = new Entry
             {
                 Placeholder = "Description",
-                Text = "Description!"
             });
 
             mainView.Children.Add(submitButton = new Button

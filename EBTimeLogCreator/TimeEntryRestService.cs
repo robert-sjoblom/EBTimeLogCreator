@@ -10,7 +10,7 @@ namespace EBTimeLogCreator
 {
     public class TimeEntryRestService : IRestService
     {
-        HttpClient client;
+        readonly HttpClient client;
 
         public TimeEntryRestService()
         {

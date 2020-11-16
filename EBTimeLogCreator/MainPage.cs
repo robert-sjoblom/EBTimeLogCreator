@@ -1,27 +1,27 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net.Http;
 using Xamarin.Forms;
 namespace EBTimeLogCreator
 {
     public class MainPage : ContentPage
     {
-        private double fontSize = Device.GetNamedSize(NamedSize.Medium, typeof(Label));
-        private Entry description;
-        private Button submitButton;
-        private AccountView accountView;
-        private TimeEntryRestService TimeEntryRestService = new TimeEntryRestService();
+        private readonly Entry description;
+        private readonly Button submitButton;
+        private readonly AccountView accountView;
+        private readonly TimeEntryRestService TimeEntryRestService = new TimeEntryRestService();
 
         public MainPage()
         {
-            this.Padding = new Thickness(20);
-            this.accountView = new AccountView();
+            Padding = new Thickness(20);
+            accountView = new AccountView();
 
             StackLayout mainView = new StackLayout
             {
                 Spacing = 15
             };
 
-            mainView.Children.Add(accountView.userInfo);
+            mainView.Children.Add(accountView.UserInfo);
 
             mainView.Children.Add(new Label
             {
@@ -54,7 +54,7 @@ namespace EBTimeLogCreator
 
             submitButton.Clicked += OnSubmit;
 
-            this.Content = mainView;
+            Content = mainView;
         }
 
         private void OnDescriptionChange(object sender, PropertyChangedEventArgs e)
@@ -67,22 +67,15 @@ namespace EBTimeLogCreator
                 return;
             }
 
-            if (!string.IsNullOrEmpty(enteredText))
-            {
-                submitButton.IsEnabled = true;
-            }
-            else
-            {
-                submitButton.IsEnabled = false;
-            }
+            submitButton.IsEnabled = !string.IsNullOrEmpty(enteredText);
 
         }
 
         private async void OnSubmit(object sender, EventArgs e)
         {
 
-            var entry = new TimeEntry(description.Text);
-            var response = await TimeEntryRestService.SaveTimeLogAsync(entry, accountView.AuthString());
+            TimeEntry entry = new TimeEntry(description.Text);
+            HttpResponseMessage response = await TimeEntryRestService.SaveTimeLogAsync(entry, accountView.AuthString());
 
             if (response.IsSuccessStatusCode)
             {
@@ -97,17 +90,17 @@ namespace EBTimeLogCreator
 
         private bool CredentialsExist()
         {
-            return (IsUsernamePresent() && IsPasswordPresent());
+            return IsUsernamePresent() && IsPasswordPresent();
         }
 
         private bool IsUsernamePresent()
         {
-            return !(string.IsNullOrEmpty(accountView.Username.Text));
+            return !string.IsNullOrEmpty(accountView.Username.Text);
         }
 
         private bool IsPasswordPresent()
         {
-            return !(string.IsNullOrEmpty(accountView.Password.Text));
+            return !string.IsNullOrEmpty(accountView.Password.Text);
         }
     }
 }

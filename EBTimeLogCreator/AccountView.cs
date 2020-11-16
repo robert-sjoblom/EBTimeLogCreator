@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Xamarin.Forms;
 namespace EBTimeLogCreator
 {
@@ -7,7 +6,7 @@ namespace EBTimeLogCreator
     {
         public Entry Username { get; }
         public Entry Password { get; }
-        public View userInfo { get; }
+        public View UserInfo { get; }
 
         public AccountView( )
         {
@@ -53,19 +52,19 @@ namespace EBTimeLogCreator
 
             userInfo.Content = panel;
 
-            this.userInfo = userInfo;
+            UserInfo = userInfo;
         }
 
         internal string AuthString()
         {
-            var str = new StringBuilder();
+            StringBuilder str = new StringBuilder();
             str.Append(Username.Text);
             str.Append(":");
             str.Append(Password.Text);
 
             byte[] bytes = Encoding.Default.GetBytes(str.ToString());
 
-            var base64String = System.Convert.ToBase64String(bytes);
+            string base64String = System.Convert.ToBase64String(bytes);
 
             return "Basic " + base64String;
         }

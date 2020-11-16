@@ -1,5 +1,4 @@
-﻿using System;
-namespace EBTimeLogCreator
+﻿namespace EBTimeLogCreator
 {
     public interface IMessage
     {

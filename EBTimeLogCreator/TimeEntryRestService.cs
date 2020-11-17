@@ -23,8 +23,6 @@ namespace EBTimeLogCreator
 
             try
             {
-                HttpResponseMessage response = null;
-
                 string json = JsonConvert.SerializeObject(item);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -41,10 +39,7 @@ namespace EBTimeLogCreator
                     Content = content,
                 };
 
-                response = await client.SendAsync(httpRequestMessage);
-
-                return response;
-
+                return await client.SendAsync(httpRequestMessage);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 namespace EBTimeLogCreator
 {
@@ -81,10 +82,12 @@ namespace EBTimeLogCreator
             {
                 DependencyService.Get<IMessage>().ShortAlert("That went okay!");
                 description.Text = "";
+                accountView.SaveCredentials();
             }
             else
             {
-                DependencyService.Get<IMessage>().ShortAlert("That could have gone better.");
+                DependencyService.Get<IMessage>()
+                                 .ShortAlert("That could have gone better.");
             }
         }
 

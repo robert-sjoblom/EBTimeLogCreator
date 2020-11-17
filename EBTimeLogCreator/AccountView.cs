@@ -1,5 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Xamarin.Forms;
+using Xamarin.Essentials;
+using System.Threading.Tasks;
+
 namespace EBTimeLogCreator
 {
     public class AccountView : ContentPage
@@ -8,7 +12,7 @@ namespace EBTimeLogCreator
         public Entry Password { get; }
         public View UserInfo { get; }
 
-        public AccountView( )
+        public AccountView()
         {
             Expander userInfo = new Expander
             {
@@ -35,7 +39,8 @@ namespace EBTimeLogCreator
             panel.Children.Add(Username = new Entry
             {
                 Placeholder = "Username",
-                Keyboard = Keyboard.Email
+                Keyboard = Keyboard.Email,
+                Text = GetValueFromSecureStorageAndWait("username")
             });
 
             panel.Children.Add(new Label
@@ -47,7 +52,8 @@ namespace EBTimeLogCreator
             panel.Children.Add(Password = new Entry
             {
                 Placeholder = "Password",
-                IsPassword = true
+                IsPassword = true,
+                Text = GetValueFromSecureStorageAndWait("password")
             });
 
             userInfo.Content = panel;
@@ -55,18 +61,63 @@ namespace EBTimeLogCreator
             UserInfo = userInfo;
         }
 
+        // HACK this is an antipattern, but we'll do it like this for now
+        // 2020-11-17
+        private string GetValueFromSecureStorageAndWait(string value)
+        {
+            Task<string> task = GetValueAsync(value);
+            task.Wait();
+            return task.Result;
+        }
+
+        private async Task<string> GetValueAsync(string value)
+        {
+            try
+            {
+                return await SecureStorage.GetAsync(value);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         internal string AuthString()
         {
             StringBuilder str = new StringBuilder();
-            str.Append(Username.Text);
-            str.Append(":");
-            str.Append(Password.Text);
+            _ = str.Append(Username.Text);
+            _ = str.Append(":");
+            _ = str.Append(Password.Text);
 
             byte[] bytes = Encoding.Default.GetBytes(str.ToString());
 
-            string base64String = System.Convert.ToBase64String(bytes);
+            string base64String = Convert.ToBase64String(bytes);
 
             return "Basic " + base64String;
         }
+
+        public async void SaveCredentials()
+        {
+            await SaveCredentialAsync(Username, "username");
+            await SaveCredentialAsync(Password, "password");
+        }
+
+        private async Task SaveCredentialAsync(Entry entry, string key)
+        {
+            if (!string.IsNullOrWhiteSpace(entry.Text))
+            {
+                try
+                {
+                    await SecureStorage.SetAsync(key, entry.Text);
+                }
+
+                catch (Exception)
+                {
+                    DependencyService.Get<IMessage>()
+                                     .ShortAlert("Failed to store user credentials");
+                }
+            }
+        }
+
     }
 }

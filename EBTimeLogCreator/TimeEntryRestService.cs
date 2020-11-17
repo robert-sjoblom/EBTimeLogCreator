@@ -25,19 +25,7 @@ namespace EBTimeLogCreator
             {
                 string json = JsonConvert.SerializeObject(item);
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                var httpRequestMessage = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Post,
-                    RequestUri = uri,
-                    Headers =
-                    {
-                        { HttpRequestHeader.Authorization.ToString(), auth_string},
-                        { HttpRequestHeader.Accept.ToString(), "application/json" },
-                        { HttpRequestHeader.ContentType.ToString(), "application/json;charset=UTF-8" }
-                    },
-                    Content = content,
-                };
+                HttpRequestMessage httpRequestMessage = HttpPostRequest(auth_string, uri, content);
 
                 return await client.SendAsync(httpRequestMessage);
             }
@@ -46,6 +34,22 @@ namespace EBTimeLogCreator
                 Debug.WriteLine(@"\tError {0}", ex.Message);
                 return null;
             }
+        }
+
+        private static HttpRequestMessage HttpPostRequest(string auth_string, Uri uri, StringContent content)
+        {
+            return new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = uri,
+                Headers =
+                    {
+                        { HttpRequestHeader.Authorization.ToString(), auth_string},
+                        { HttpRequestHeader.Accept.ToString(), "application/json" },
+                        { HttpRequestHeader.ContentType.ToString(), "application/json;charset=UTF-8" }
+                    },
+                Content = content,
+            };
         }
     }
 }
